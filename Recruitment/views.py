@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from . import forms, models
+import re
 
 # Create your views here.
 
@@ -27,8 +28,56 @@ def index(request):
     context = {'jobs':jobs, 'recentJobs':recentJobs, 'col1':col1, 'col2':col2, 'col3':col3, 'col4':col4}
     return render(request, 'recruitment/index.html', context=context)
 
+def job_query(request):
+    if request.method == 'POST':
+        job_title = request.POST.get("job-title")
+        job_type = request.POST.get("job-type")
+        location = request.POST.get("location")
+        query_result = None
+        if job_title == '' and location == '' and job_type != '':
+            query_result = models.Job.objects.filter(job_type=job_type)
+        elif job_type == '' and job_title == '' and location != '':
+            query_result = models.Job.objects.filter(location=location)
+        elif job_type != '' and job_title == '' and location != '':
+            query_result = models.Job.objects.filter(location=location, job_type=job_type)
+        elif job_title != '' and job_type == '' and location == '':
+            jobs = models.Job.objects.all()
+            query_result = [i for i in jobs if re.search(job_title, i.title)]
+        elif job_title != '' and job_type != '' and location != '':
+            jobs = models.Job.objects.filter(job_type=job_type, location=location)
+            query_result = [i for i in jobs if re.search(job_title, i.title)]
+        elif job_title != '' and job_type != '' and location == '':
+            jobs = models.Job.objects.filter(job_type=job_type)
+            query_result = [i for i in jobs if re.search(job_title, i.title)]
+        elif job_title != '' and job_type == '' and location != '':
+            jobs = models.Job.objects.filter(location=location)
+            query_result = [i for i in jobs if re.search(job_title, i.title)]
+        else:
+            query_result = []
+    context = {'query_result':query_result}
+    return render(request, 'recruitment/job-query.html', context=context)
+
 def about(request):
     return render(request, 'recruitment/about.html')
+
+def job_detail(request, slug):
+    job = get_object_or_404(models.Job, slug=str(slug))
+
+    context = {'job':job}
+    return render(request, 'recruitment/job-detail.html', context=context)
+
+def detailed_application(request, slug):
+    if request.method == 'POST':
+        form = forms.DetailedApplicationForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.job_title = str(slug)
+            post.save()
+            return redirect('application-successful/')
+    else:
+        form = forms.DetailedApplicationForm()
+    context = {'slug':str(slug), 'detailedApplicationForm':form}
+    return render(request, 'recruitment/detailed-application.html', context=context)
 
 def contact(request):
     return render(request, 'recruitment/contact.html')
@@ -36,12 +85,18 @@ def contact(request):
 def blog(request):
     return render(request, 'recruitment/blog.html')
 
+def job_added(request):
+    return render(request, 'recruitment/job-added.html')
+
+def application_successful(request, *args):
+    return render(request, 'recruitment/application-successful.html')
+
 def post_job(request):
     if request.method == 'POST':
         form = forms.JobCreationForm(request.POST)
         if form.is_valid():
             form.save(commit=True)
-            return redirect(request.META.get('HTTP_REFERER'))
+            return redirect('job-added-successfully/')
     else:
         form = forms.JobCreationForm()
     context = {'jobCreationForm':form}

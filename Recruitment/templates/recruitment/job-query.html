@@ -1,0 +1,135 @@
+{% extends 'recruitment/form-success.html' %}
+{% load static %}
+
+{% block mainContent %}
+<!-- content starts here -->
+<style>
+        /* The animation code */
+        @keyframes example {
+          0%   {color: green}
+          25%  {color: greenyellow}
+          50%  {color: orange}
+          75%  {color: darkorange}
+          100% {color: greenyellow}
+        }
+
+        /* The element to apply the animation to */
+        #down-arrow {
+          font-size: 50px;
+          color: forestgreen;
+          background-color: grey;
+          animation-name: example;
+          animation-duration: 4s;
+          animation-delay: -1s;
+          animation-iteration-count: infinite;
+        }
+
+        .css-button {
+          display: inline-block;
+          border-radius: 4px;
+          background-color: hotpink;
+          border: none;
+          color: #FFFFFF;
+          text-align: center;
+          font-size: 28px;
+          padding: 20px;
+          width: auto;
+          transition: all 0.5s;
+          cursor: pointer;
+          margin: auto;
+        }
+
+        .css-button span {
+          cursor: pointer;
+          display: inline-block;
+          position: relative;
+          transition: 0.5s;
+        }
+
+        .css-button span:after {
+          content: '\00bb';
+          position: absolute;
+          opacity: 0;
+          top: 0;
+          right: -20px;
+          transition: 0.5s;
+        }
+
+        .css-button:hover span {
+          padding-right: 25px;
+        }
+
+        .css-button:hover span:after {
+          opacity: 1;
+          right: 0;
+        }
+    </style>
+
+<div class="ftco-section bg-light">
+  <div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div style="width: fit-content; margin: auto; display: inline-block; float: left; background-color: deeppink; vertical-align: center">
+                  <a href="{% url 'homePage' %}" class="css-button">
+                      <i id="down-arrow" class="icon-angle-double-left" ></i>
+                      <i style="font-size: 48px; align-items: center; vertical-align: center; text-align: center; margin: auto">Go Back</i>
+
+                  </a>
+              </div>
+        </div>
+
+      <div class="col-12 align-content-center justify-content-center bg-animate mb-auto">
+          <h2 style="text-align: center">Your Query result</h2>
+
+          </div>
+
+      </div>
+
+      <div class="row">
+        {% if query_result|length == 0 %}
+            <div class="col-md-12 ftco-animate">
+                <div class="job-post-item bg-white p-4 d-block d-md-flex align-items-center">
+                    <div class="job-post-item-header d-flex align-items-center">
+                        <h2 class="mr-3 text-black h3" style="text-align: center">No Result for your query, try another keyword</h2>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% for recentJob in query_result %}
+            <div class="col-md-12 ftco-animate">
+
+            <div class="job-post-item bg-white p-4 d-block d-md-flex align-items-center">
+
+              <div class="mb-4 mb-md-0 mr-5">
+                <div class="job-post-item-header d-flex align-items-center">
+                  <h2 class="mr-3 text-black h3">{{ recentJob.title }}</h2>
+                  <div class="badge-wrap">
+                   <span class="bg-primary text-white badge py-2 px-3">{{ recentJob.job_type }}</span>
+                  </div>
+                </div>
+                <div class="job-post-item-body d-block d-md-flex">
+                  <div class="mr-3"><span class="icon-layers"></span> <a href="{% url 'recruitment:job-details' slug=recentJob.slug %}">{{ recentJob.company }}</a></div>
+                  <div><span class="icon-my_location"></span> <span>{{ recentJob.location }}</span></div>
+                </div>
+              </div>
+
+              <div class="ml-auto d-flex">
+                <a href="{% url 'recruitment:job-details' slug=recentJob.slug %}" class="btn btn-primary py-2 mr-1">Apply Job</a>
+                <a href="#" class="btn btn-secondary rounded-circle btn-favorite d-flex align-items-center icon">
+                  <span class="icon-heart"></span>
+                </a>
+              </div>
+            </div>
+          </div><!-- end -->
+        {% endfor %}
+
+    </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

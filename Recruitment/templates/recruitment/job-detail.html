@@ -1,0 +1,47 @@
+{% extends 'recruitment/base.html' %}
+{% load static %}
+
+{% block mainContent %}
+<div class="hero-wrap js-fullheight" style="background-image: url('../../../static/images/bg_2.jpg');" data-stellar-background-ratio="0.5">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text js-fullheight align-items-end justify-content-start" data-scrollax-parent="true">
+      <div class="col-md-8 ftco-animate text-center text-md-left mb-5" data-scrollax=" properties: { translateY: '70%' }">
+        <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-3"><a href="{% url 'homePage' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Job-Details</span></p>
+        <h1 class="mb-3 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Job details for<br /> {{ job.title }}</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="ftco-about d-md-flex">
+  <div class="one-half img" style="background-image: url('{% static 'images/job-details/job.jpg' %}');">
+      <div class="heading-section ftco-animate ">
+          <h2 class="mb-4"><span style="color: blue">Job title: {{ job.title }}</span></h2>
+          <hr />
+          <h3 class="mb-4"><span style="color: orangered">Job type: {{ job.job_type }}</span></h3>
+          <h3 class="mb-4"><span style="color: orange">Job location: {{ job.location }}</span></h3>
+          <h4 class="mb-4"><span style="color: mediumpurple">This Job was posted on: {{ job.date }}</span></h4>
+          <h4 class="mb-4"><span style="color: darkblue">Available Vacancies: {{ job.vacancies }}</span></h4>
+      </div>
+  </div>
+  <div class="one-half img align-content-center" style="background-image: url('{% static 'images/job-details/apply.jpg' %}');">
+    <div class="heading-section ftco-animate ">
+      <h2 class="mb-4"><span>Job description</span></h2>
+    </div>
+    <div>
+      <p style="color: red">{{ job.description }}</p>
+    </div>
+      <h3 class="mb-4"><span style="color: blue">Job salary: {{ job.salary }}</span></h3>
+      {% if job.open %}
+          <h5 class="mb-4"><span style="color: green">Application Window for this Job is Open</span></h5>
+          <a style="color: darkblue; background-color: orangered" href="{% url 'recruitment:detailed-application' slug=job.title %}" class="btn btn-secondary rounded-circle btn-favorite align-items-center icon">
+              <span style="color: orange; align-items: center" class="icon-arrow-down"><h6 style="color: forestgreen; text-align: center;">Apply Now</h6></span>
+            </a>
+      {% else %}
+          <h3 class="mb-4"><span style="color: red">Application Window for this Job is Open</span></h3>
+      {% endif %}
+  </div>
+</section>
+
+{% endblock %}

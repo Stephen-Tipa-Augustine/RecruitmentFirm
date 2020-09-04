@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'recruitment/base.html' %}
 {% load static %}
 
 {% block mainContent %}
@@ -15,9 +15,6 @@
             <div class="col-md-12 nav-link-wrap">
               <div class="nav nav-pills text-center" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                 <a class="nav-link active mr-md-1" id="v-pills-1-tab" data-toggle="pill" href="#v-pills-1" role="tab" aria-controls="v-pills-1" aria-selected="true">Find a Job</a>
-
-                <a class="nav-link" id="v-pills-2-tab" data-toggle="pill" href="#v-pills-2" role="tab" aria-controls="v-pills-2" aria-selected="false">Find a Candidate</a>
-
               </div>
             </div>
             <div class="col-md-12 tab-wrap">
@@ -25,13 +22,14 @@
               <div class="tab-content p-4" id="v-pills-tabContent">
 
                 <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="v-pills-nextgen-tab">
-                  <form action="#" class="search-job">
+                  <form action="{% url 'recruitment:job-query' %}" method="post" class="search-job">
+                      {% csrf_token %}
                     <div class="row">
                       <div class="col-md">
                         <div class="form-group">
                           <div class="form-field">
                             <div class="icon"><span class="icon-briefcase"></span></div>
-                            <input type="text" class="form-control" placeholder="eg. Garphic. Web Developer">
+                            <input type="text" value="" name="job-title" class="form-control" placeholder="eg. Garphic. Web Developer">
                           </div>
                         </div>
                       </div>
@@ -40,13 +38,13 @@
                           <div class="form-field">
                             <div class="select-wrap">
                               <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                              <select name="" id="" class="form-control">
+                              <select name="job-type" id="" class="form-control">
                                 <option value="">Category</option>
-                                <option value="">Full Time</option>
-                                <option value="">Part Time</option>
-                                <option value="">Freelance</option>
-                                <option value="">Internship</option>
-                                <option value="">Temporary</option>
+                                <option value="Full Time">Full Time</option>
+                                <option value="Part Time">Part Time</option>
+                                <option value="Freelance">Freelance</option>
+                                <option value="Internship">Internship</option>
+                                <option value="Temporary">Temporary</option>
                               </select>
                             </div>
                           </div>
@@ -56,7 +54,7 @@
                         <div class="form-group">
                           <div class="form-field">
                             <div class="icon"><span class="icon-map-marker"></span></div>
-                            <input type="text" class="form-control" placeholder="Location">
+                            <input type="text" value="" name="location" class="form-control" placeholder="Location">
                           </div>
                         </div>
                       </div>
@@ -71,52 +69,6 @@
                   </form>
                 </div>
 
-                <div class="tab-pane fade" id="v-pills-2" role="tabpanel" aria-labelledby="v-pills-performance-tab">
-                  <form action="#" class="search-job">
-                    <div class="row">
-                      <div class="col-md">
-                        <div class="form-group">
-                          <div class="form-field">
-                            <div class="icon"><span class="icon-user"></span></div>
-                            <input type="text" class="form-control" placeholder="eg. Adam Scott">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md">
-                        <div class="form-group">
-                          <div class="form-field">
-                            <div class="select-wrap">
-                              <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                              <select name="" id="" class="form-control">
-                                <option value="">Category</option>
-                                <option value="">Full Time</option>
-                                <option value="">Part Time</option>
-                                <option value="">Freelance</option>
-                                <option value="">Internship</option>
-                                <option value="">Temporary</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md">
-                        <div class="form-group">
-                          <div class="form-field">
-                            <div class="icon"><span class="icon-map-marker"></span></div>
-                            <input type="text" class="form-control" placeholder="Location">
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md">
-                        <div class="form-group">
-                          <div class="form-field">
-                            <input type="submit" value="Search" class="form-control btn btn-primary">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
               </div>
             </div>
           </div>
@@ -130,16 +82,25 @@
   <div class="container">
     <div class="row justify-content-center mb-5 pb-3">
       <div class="col-md-7 heading-section text-center ftco-animate">
-        <span class="subheading">Categories work wating for you</span>
+        <span class="subheading">Categories of work waiting for you</span>
         <h2 class="mb-4"><span>Current</span> Job Posts</h2>
       </div>
     </div>
     <div class="row">
+        {% if jobs|length == 0 %}
+            <div class="col-md-12 ftco-animate">
+                <div class="job-post-item bg-white p-4 d-block d-md-flex align-items-center">
+                    <div class="job-post-item-header d-flex align-items-center">
+                        <h2 class="mr-3 text-black h3" style="text-align: center">No job posts available yet on this platform</h2>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
         {% if col1 is not None %}
             <div class="col-md-3 ftco-animate">
             <ul class="category">
                 {% for col in col1 %}
-                    <li><a href="#">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
+                    <li><a href="{% url 'recruitment:job-details' slug=col.slug %}">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
                 {% endfor %}
             </ul>
           </div>
@@ -149,7 +110,7 @@
             <div class="col-md-3 ftco-animate">
             <ul class="category">
                 {% for col in col2 %}
-                    <li><a href="#">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
+                    <li><a href="{% url 'recruitment:job-details' slug=col.slug %}">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
                 {% endfor %}
             </ul>
           </div>
@@ -159,7 +120,7 @@
             <div class="col-md-3 ftco-animate">
             <ul class="category">
                 {% for col in col3 %}
-                    <li><a href="#">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
+                    <li><a href="{% url 'recruitment:job-details' slug=col.slug %}">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
                 {% endfor %}
             </ul>
           </div>
@@ -169,7 +130,7 @@
             <div class="col-md-3 ftco-animate">
             <ul class="category">
                 {% for col in col4 %}
-                    <li><a href="#">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
+                    <li><a href="{% url 'recruitment:job-details' slug=col.slug %}">{{ col.title }} <span class="number" data-number="{{ col.salary }}">0</span></a></li>
                 {% endfor %}
             </ul>
           </div>
@@ -188,6 +149,15 @@
       </div>
     </div>
     <div class="row">
+        {% if recentJobs|length == 0 %}
+            <div class="col-md-12 ftco-animate">
+                <div class="job-post-item bg-white p-4 d-block d-md-flex align-items-center">
+                    <div class="job-post-item-header d-flex align-items-center">
+                        <h2 class="mr-3 text-black h3" style="text-align: center">No Recent job posts yet on this platform!</h2>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         {% for recentJob in recentJobs %}
             <div class="col-md-12 ftco-animate">
@@ -202,13 +172,13 @@
                   </div>
                 </div>
                 <div class="job-post-item-body d-block d-md-flex">
-                  <div class="mr-3"><span class="icon-layers"></span> <a href="#">{{ recentJob.company }}</a></div>
+                  <div class="mr-3"><span class="icon-layers"></span> <a href="{% url 'recruitment:job-details' slug=recentJob.slug %}">{{ recentJob.company }}</a></div>
                   <div><span class="icon-my_location"></span> <span>{{ recentJob.location }}</span></div>
                 </div>
               </div>
 
               <div class="ml-auto d-flex">
-                <a href="job-single.html" class="btn btn-primary py-2 mr-1">Apply Job</a>
+                <a href="{% url 'recruitment:job-details' slug=recentJob.slug %}" class="btn btn-primary py-2 mr-1">Apply Job</a>
                 <a href="#" class="btn btn-secondary rounded-circle btn-favorite d-flex align-items-center icon">
                   <span class="icon-heart"></span>
                 </a>

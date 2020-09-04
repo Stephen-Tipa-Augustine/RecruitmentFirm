@@ -5,7 +5,7 @@ from django.db.models.signals import pre_save
 # Create your models here.
 def slug_generator(sender, instance, *args, **kwargs):
     if not instance.slug:
-        name = instance.name
+        name = instance.title
         name = name.lower()
         slug = re.sub(r' +', '-', name)
         instance.slug = slug
@@ -27,9 +27,10 @@ class Job(models.Model):
         return self.title
 
 class Candidate(models.Model):
+    job_title = models.CharField(max_length=200)
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
-    middle_name = models.CharField(max_length=20, blank=True, null=True)
+    middle_name = models.CharField(max_length=20, default='')
     location =models.CharField(max_length=100)
     email = models.EmailField()
     contact = models.CharField(max_length=50)
@@ -43,7 +44,7 @@ class Candidate(models.Model):
     date = models.DateTimeField(auto_now_add=True, help_text='date and time of application')
 
     def __str__(self):
-        return self.first_name + self.last_name
+        return self.first_name + ' ' + self.middle_name + ' ' + self.last_name
 
 
 pre_save.connect(slug_generator, sender=Job)
