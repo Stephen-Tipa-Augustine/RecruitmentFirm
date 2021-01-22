@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from . import forms, models
+from . import forms, models, subscription_xml_generator
 import re
+from RecruitmentFirm.settings import STATICFILES_DIRS
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
@@ -101,6 +103,17 @@ def post_job(request):
         form = forms.JobCreationForm()
     context = {'jobCreationForm':form}
     return render(request, 'recruitment/new-post.html', context=context)
+
+def add_subscriber(request):
+    xml_path = STATICFILES_DIRS[0] + "/xml/subscription_data.xml"
+    if request.method == 'POST':
+        email = request.POST.get("email")
+        name = "Anonymous"
+        writer = subscription_xml_generator.AppendToXML(xml_path)
+        writer.createChild(name=name, email=email)
+        writer.saveToXML()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 def want_job(request):
     return render(request, 'recruitment/job-post.html')

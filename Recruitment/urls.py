@@ -14,4 +14,5 @@ urlpatterns = [
          views.application_successful, name='application-successful'),
     path('post-a-new-job/job-added-successfully/', views.job_added, name='job-added'),
     path('jobs/query-results/', views.job_query, name='job-query'),
+    path('jobs/subcribe-to-our-mail-list/', views.add_subscriber, name='add_subscriber'),
 ]

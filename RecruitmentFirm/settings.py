@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = 'ss7&%7_j-mns()87b@h$i%$$!!fajrks9bqn)37f=y643k-)pl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['RecruitmentFirm.pythonanywhere.com', 'recruitmentfirm.pythonanywhere.com']
 
 
 # Application definition
